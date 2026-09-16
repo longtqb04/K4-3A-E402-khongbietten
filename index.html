@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CP2 - Luồng Hoạt Động Hoàn Chỉnh (Trợ lý Discord)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Helvetica, Arial, sans-serif; }
+    body { display: flex; height: 100vh; background-color: #313338; color: #dbdee1; }
+
+    /* Flow Stepper Bar ở trên cùng */
+    .app-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; }
+    .flow-stepper { background: #111214; border-bottom: 2px solid #5865f2; padding: 8px 16px; display: flex; align-items: center; justify-content: space-between; font-size: 13px; }
+    .stepper-nodes { display: flex; align-items: center; gap: 8px; }
+    .step-pill { padding: 4px 10px; border-radius: 12px; background: #2b2d31; color: #949ba4; font-size: 12px; }
+    .step-pill.active { background: #5865f2; color: #fff; font-weight: bold; }
+    .step-arrow { color: #4e5058; font-weight: bold; }
+
+    .main-body { display: flex; flex: 1; overflow: hidden; }
+
+    /* Sidebar Channels */
+    .sidebar { width: 230px; background-color: #2b2d31; display: flex; flex-direction: column; }
+    .server-header { height: 48px; border-bottom: 1px solid #1f2023; display: flex; align-items: center; padding: 0 16px; font-weight: bold; color: #f2f3f5; font-size: 14px; }
+    .channel-list { padding: 12px 8px; display: flex; flex-direction: column; gap: 4px; }
+    .channel { padding: 8px 10px; border-radius: 4px; color: #949ba4; display: flex; align-items: center; gap: 8px; font-size: 13px; }
+    .channel.active { background-color: #404249; color: #fff; }
+
+    /* Chat Area */
+    .chat-container { flex: 1; display: flex; flex-direction: column; background-color: #313338; }
+    .chat-header { height: 48px; border-bottom: 1px solid #202225; display: flex; align-items: center; padding: 0 16px; font-size: 15px; font-weight: bold; color: #fff; }
+    .messages-area { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+
+    /* Message Item */
+    .message { display: flex; gap: 12px; animation: fadeIn 0.25s ease-in; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+    .avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; flex-shrink: 0; font-size: 13px; }
+    .user-avatar { background-color: #5865f2; }
+    .bot-avatar { background-color: #23a55a; }
+
+    .msg-content { display: flex; flex-direction: column; gap: 4px; max-width: 88%; }
+    .msg-author { font-size: 14px; font-weight: 600; color: #f2f3f5; display: flex; align-items: center; gap: 6px; }
+    .bot-badge { background-color: #5865f2; font-size: 9px; padding: 1px 4px; border-radius: 3px; color: #fff; font-weight: bold; }
+    .timestamp { font-size: 11px; color: #949ba4; font-weight: normal; }
+    .msg-text { font-size: 13.5px; line-height: 1.45; color: #dbdee1; }
+
+    /* Bot Embed Box */
+    .bot-embed { border-left: 4px solid #5865f2; background: #2b2d31; padding: 12px; border-radius: 4px; margin-top: 6px; display: flex; flex-direction: column; gap: 8px; }
+    .embed-title { font-weight: bold; color: #fff; font-size: 13.5px; }
+    .embed-tag { display: inline-block; padding: 2px 6px; border-radius: 3px; font-size: 11px; font-weight: bold; width: fit-content; }
+    .tag-found { background: #23a55a33; color: #57f287; border: 1px solid #57f287; }
+    .tag-clarify { background: #fee75c33; color: #fee75c; border: 1px solid #fee75c; }
+    .tag-escalate { background: #ed424533; color: #ed4245; border: 1px solid #ed4245; }
+
+    .embed-source { font-size: 12px; color: #00a8fc; text-decoration: underline; }
+    .action-buttons { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+    .btn { background: #4e5058; color: #fff; border: none; padding: 6px 12px; border-radius: 3px; cursor: pointer; font-size: 12px; transition: 0.15s; }
+    .btn:hover { background: #6d6f78; }
+    .btn-success { background: #23a55a; }
+    .btn-success:hover { background: #1a7a42; }
+    .btn-danger { background: #da373c; }
+    .btn-danger:hover { background: #a12828; }
+
+    /* End-State Banner */
+    .end-state-box { background: #1e1f22; border: 1px dashed #5865f2; border-radius: 6px; padding: 10px 14px; margin-top: 8px; font-size: 12.5px; color: #57f287; display: flex; align-items: center; gap: 8px; }
+
+    /* Quick Scenarios Bar */
+    .quick-scenarios { background: #1e1f22; padding: 10px 16px; border-top: 1px solid #2b2d31; display: flex; align-items: center; gap: 10px; font-size: 13px; }
+    .quick-scenarios span { color: #949ba4; font-weight: 600; white-space: nowrap; }
+    .quick-btn { background: #35373c; border: 1px solid #4e5058; color: #dbdee1; padding: 5px 11px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+    .quick-btn:hover { background: #5865f2; color: #fff; }
+  </style>
+</head>
+<body>
+
+<div class="app-wrapper">
+  <!-- Sơ đồ thanh luồng trực quan giải quyết triệt để "ĐỂ LÀM GÌ" -->
+  <div class="flow-stepper">
+    <div class="stepper-nodes">
+      <strong style="color: #fff;">Luồng tương tác:</strong>
+      <span class="step-pill" id="st-1">1. User hỏi lỗi</span>
+      <span class="step-arrow">➔</span>
+      <span class="step-pill" id="st-2">2. AI quyết định (FOUND / CLARIFY / ESCALATE)</span>
+      <span class="step-arrow">➔</span>
+      <span class="step-pill" id="st-3">3. Phản hồi kèm hành động</span>
+      <span class="step-arrow">➔</span>
+      <span class="step-pill" id="st-4">4. Kết thúc (Solved / Chuyển TA)</span>
+    </div>
+    <div style="font-size:12px; color:#949ba4;">Mốc CP2: Minh họa trọn vẹn luồng người dùng</div>
+  </div>
+
+  <div class="main-body">
+    <div class="sidebar">
+      <div class="server-header">AI Thực Chiến #4</div>
+      <div class="channel-list">
+        <div class="channel"># thong-bao</div>
+        <div class="channel active"># ho-tro-ky-thuat</div>
+        <div class="channel"># hoi-dap-lab</div>
+      </div>
+    </div>
+
+    <div class="chat-container">
+      <div class="chat-header"># ho-tro-ky-thuat (Demo luồng kết thúc)</div>
+
+      <div class="messages-area" id="chat-stream">
+        <div class="message">
+          <div class="avatar bot-avatar">BOT</div>
+          <div class="msg-content">
+            <div class="msg-author">Trợ lý AI <span class="bot-badge">BOT</span> <span class="timestamp">Hôm nay</span></div>
+            <div class="msg-text">Chọn 1 trong 3 kịch bản bên dưới để xem toàn bộ luồng: từ lúc người dùng hỏi, AI phân loại, đến khi kết thúc vấn đề!</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="quick-scenarios">
+        <span>Chọn luồng test:</span>
+        <button class="quick-btn" onclick="startFlow('found')">Luồng 1: FOUND (Lỗi OOM & Solved)</button>
+        <button class="quick-btn" onclick="startFlow('clarify')">Luồng 2: CLARIFY (Hỏi bù thông tin)</button>
+        <button class="quick-btn" onclick="startFlow('escalate')">Luồng 3: CHUYỂN TA (Gắn thẻ & Ticket)</button>
+        <button class="quick-btn" style="margin-left:auto; background:#4e5058;" onclick="resetChat()">Đặt lại</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const chatStream = document.getElementById('chat-stream');
+
+  function updateSteps(step) {
+    for (let i = 1; i <= 4; i++) {
+      const el = document.getElementById(`st-${i}`);
+      el.classList.remove('active');
+      if (i <= step) el.classList.add('active');
+    }
+  }
+
+  function appendMessage(sender, text, isBot = false, embedHtml = '') {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'message';
+    const avatarClass = isBot ? 'bot-avatar' : 'user-avatar';
+    const authorName = isBot ? 'Trợ lý AI <span class="bot-badge">BOT</span>' : 'Học viên';
+    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    msgDiv.innerHTML = `
+      <div class="avatar ${avatarClass}">${isBot ? 'BOT' : 'HV'}</div>
+      <div class="msg-content">
+        <div class="msg-author">${authorName} <span class="timestamp">${time}</span></div>
+        <div class="msg-text">${text}</div>
+        ${embedHtml}
+      </div>
+    `;
+    chatStream.appendChild(msgDiv);
+    chatStream.scrollTop = chatStream.scrollHeight;
+  }
+
+  function startFlow(scenario) {
+    resetChat();
+    updateSteps(1);
+
+    if (scenario === 'found') {
+      appendMessage('User', 'Mình chạy Colab Lab 02 bị lỗi <code>CUDA out of memory</code> thì làm sao?');
+      setTimeout(() => {
+        updateSteps(2);
+        const embed = `
+          <div class="bot-embed">
+            <span class="embed-tag tag-found">Quyết định: FOUND (Độ tin cậy: 96%)</span>
+            <div class="embed-title">Cách khắc phục nhanh:</div>
+            <div class="msg-text">
+              1. Giảm batch size xuống 16.<br>
+              2. Thêm <code>torch.cuda.empty_cache()</code>.<br>
+              3. Chọn Runtime > Restart Session.
+            </div>
+            <div class="embed-source">Trích dẫn: docs/lab-02.md#oom</div>
+            <div class="action-buttons">
+              <button class="btn btn-success" onclick="finishFound(true)">✅ Đã sửa được lỗi</button>
+              <button class="btn btn-danger" onclick="finishFound(false)">⚠️ Vẫn không được (Gặp TA)</button>
+            </div>
+          </div>
+        `;
+        updateSteps(3);
+        appendMessage('Bot', 'Mình đã tìm thấy hướng dẫn chính xác từ tài liệu:', true, embed);
+      }, 400);
+
+    } else if (scenario === 'clarify') {
+      appendMessage('User', 'Bot ơi em bị lỗi code không chạy được.');
+      setTimeout(() => {
+        updateSteps(2);
+        const embed = `
+          <div class="bot-embed">
+            <span class="embed-tag tag-clarify">Quyết định: CLARIFY (Thiếu ngữ cảnh)</span>
+            <div class="msg-text">Bạn vui lòng chọn bài đang làm và gửi log lỗi nhé:</div>
+            <div class="action-buttons">
+              <button class="btn" onclick="userReplyClarify('Lab 01 - Onboarding')">Em đang làm Lab 01</button>
+              <button class="btn" onclick="userReplyClarify('Lab 02 - RAG Pipeline')">Em đang làm Lab 02</button>
+            </div>
+          </div>
+        `;
+        updateSteps(3);
+        appendMessage('Bot', 'Thông tin câu hỏi hiện chưa đủ để chẩn đoán:', true, embed);
+      }, 400);
+
+    } else if (scenario === 'escalate') {
+      appendMessage('User', 'Cho em xin gia hạn nộp bài tập hôm nay thêm 1 ngày vì bị ốm ạ.');
+      setTimeout(() => {
+        updateSteps(2);
+        const embed = `
+          <div class="bot-embed">
+            <span class="embed-tag tag-escalate">Quyết định: NGOÀI THẨM QUYỀN</span>
+            <div class="msg-text">Vấn đề xin hoãn/gia hạn điểm số thuộc thẩm quyền của Ban Giảng Huấn và TA.</div>
+            <div class="action-buttons">
+              <button class="btn btn-danger" onclick="finishEscalate()">🔔 Tạo Ticket gửi TA trực ban ngay</button>
+            </div>
+          </div>
+        `;
+        updateSteps(3);
+        appendMessage('Bot', 'Yêu cầu này bot không thể tự quyết định:', true, embed);
+      }, 400);
+    }
+  }
+
+  /* CÁC ĐIỂM KẾT THÚC (END-STATE) TƯỜNG MINH */
+  function finishFound(isSuccess) {
+    updateSteps(4);
+    if (isSuccess) {
+      appendMessage('Bot', `
+        <div class="end-state-box">
+          🎉 <strong>KẾT THÚC LUỒNG THÀNH CÔNG:</strong> Học viên đã giải quyết xong vấn đề. Phiên hỗ trợ tự động đóng lại (Recorded: Solved).
+        </div>
+      `, true);
+    } else {
+      finishEscalate();
+    }
+  }
+
+  function userReplyClarify(labName) {
+    appendMessage('User', `Em đang chạy bài ${labName} kèm lỗi: <code>KeyError: 'OPENAI_API_KEY'</code>`);
+    setTimeout(() => {
+      const embed = `
+        <div class="bot-embed">
+          <span class="embed-tag tag-found">Quyết định: FOUND (Sau khi Clarify)</span>
+          <div class="msg-text">Lỗi do bạn chưa đặt biến môi trường API Key. Bạn thêm file <code>.env</code> theo mẫu <code>.env.example</code> là chạy được.</div>
+        </div>
+        <div class="end-state-box">
+          🏁 <strong>KẾT THÚC LUỒNG:</strong> Đã làm rõ và cung cấp đúng tài liệu.
+        </div>
+      `;
+      updateSteps(4);
+      appendMessage('Bot', 'Đã xác định được lỗi của bạn:', true, embed);
+    }, 400);
+  }
+
+  function finishEscalate() {
+    updateSteps(4);
+    appendMessage('Bot', `
+      <div class="end-state-box" style="color: #f38688; border-color: #da373c;">
+        🎫 <strong>KẾT THÚC LUỒNG - CHUYỂN TA:</strong> Đã tạo <strong>Ticket #1042</strong> & gửi ping <code>@TA-TrucBan</code>. Thời gian cam kết phản hồi: &lt; 15 phút.
+      </div>
+    `, true);
+  }
+
+  function resetChat() {
+    chatStream.innerHTML = '';
+    updateSteps(0);
+    appendMessage('Bot', 'Đã đặt lại luồng. Hãy bấm nút kịch bản để xem toàn bộ quá trình!', true);
+  }
+</script>
+</body>
+</html>
