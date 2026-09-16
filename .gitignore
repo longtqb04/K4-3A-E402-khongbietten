@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+
+# Secrets — never commit real keys
+.env
+.env.*
+!.env.example
+
+# Data
