@@ -1,0 +1,1 @@
+{"name":"kute-discord-assistant","version":"1.0.0","private":true,"type":"module","engines":{"node":">=22.13"},"scripts":{"start":"node --env-file-if-exists=.env server.js","test":"node --test","eval":"node --env-file-if-exists=.env scripts/evaluate.js","discord:register":"node --env-file-if-exists=.env scripts/register.js","evidence":"node scripts/evidence.js"}}

@@ -1,0 +1,35 @@
+{
+  "method": "Keyword mentions among human messages; overlapping categories, not verified repeated questions.",
+  "total": 1092,
+  "human": 779,
+  "bot": 313,
+  "topics": {
+    "CVAT": 21,
+    "Phoenix": 28,
+    "Standup": 58,
+    "Attendance": 49,
+    "Team": 65
+  },
+  "examples": [
+    {
+      "id": "M12802",
+      "quote": "chào bạn Ngay sau docker compose up -d, OPA chưa lấy được policy bundle từ cvat-server, nên health check báo:\n500 ... http://opa:8181/health?bundles\nSau khoảng một phút, CVAT server hoàn tất migration; OPA tải bundle thành công và lần health check tiếp theo báo toàn bộ working."
+    },
+    {
+      "id": "M07901",
+      "quote": "Hi, mình vẫn chưa cài được CVAT. Có bạn nào hỗ trợ được mình không?"
+    },
+    {
+      "id": "M37211",
+      "quote": "các bạn labcoach cho mình hỏi, mình quét mã điểm danh đầy đủ nhưng tsao trên app ko có lịch sử điểm danh nhỉ? mình cảm ơn"
+    },
+    {
+      "id": "M28943",
+      "quote": "là mình mail về IT để kiểm tra các lượt điểm danh của mình ạ?"
+    },
+    {
+      "id": "M51989",
+      "quote": "cho  mình hỏi là mấy hôm nay bọn mình đều cho các học viên điểm danh bằng cách quét mã QR điền form thì không biết mấy hôm đó bạn học ở lớp nào để bọn mình có thể nắm được rõ và xem hỗ trợ các bạn"
+    }
+  ]
+}

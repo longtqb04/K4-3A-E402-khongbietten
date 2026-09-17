@@ -12,3 +12,5 @@ __pycache__/
 
 # Data
 data/
+runtime/
+node_modules/
