@@ -1,5 +1,5 @@
 # AI SPEC — [Tên lát cắt] · Nhóm [XX] · Zone [X]
-Hướng: [ ] A — VLearn  [ ] B — Trợ lý Học viên  [ ] C — Làn mở
+Hướng: [ ] A — VLearn  [x] B — Trợ lý Học viên  [ ] C — Làn mở
 Loại: [ ] Tối ưu tính năng có sẵn  [ ] Tính năng mới
 
 ## §1. User & Job
