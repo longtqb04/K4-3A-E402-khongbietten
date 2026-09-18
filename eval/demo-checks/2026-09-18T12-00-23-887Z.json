@@ -1,0 +1,280 @@
+{
+  "created": "2026-09-18T12:00:23.892Z",
+  "totalPlanned": 8,
+  "rows": [
+    {
+      "question": "CVAT OPA báo 500 health bundles ngay sau docker compose up -d. Vì sao?",
+      "expectedSource": "M12802",
+      "decision": "FOUND",
+      "answer": "Ngay sau docker compose up -d, OPA chưa lấy được policy bundle từ cvat-server, nên health check báo lỗi 500. Sau khoảng một phút, khi CVAT server hoàn tất migration thì OPA tải bundle thành công, và lần health check tiếp theo báo toàn bộ working.",
+      "sources": [
+        {
+          "id": "M12802",
+          "title": "CVAT · OPA health check lúc khởi động",
+          "topics": [
+            "cvat",
+            "opa",
+            "docker"
+          ],
+          "terms": [
+            "500",
+            "bundle",
+            "health",
+            "migration",
+            "compose",
+            "working"
+          ],
+          "excerpt": "Ngay sau docker compose up -d, OPA chưa lấy được policy bundle từ cvat-server, nên health check báo: 500 ... http://opa:8181/health?bundles. Sau khoảng một phút, CVAT server hoàn tất migration; OPA tải bundle thành công và lần health check tiếp theo báo toàn bộ working.",
+          "answer": "Nếu OPA báo 500 ở /health?bundles ngay sau docker compose up -d, chờ khoảng một phút để CVAT hoàn tất migration rồi kiểm tra lại.",
+          "date": "2026-09-12–14",
+          "authority": "Trao đổi cộng đồng, chưa xác minh vai trò TA",
+          "score": 5
+        }
+      ],
+      "mode": "openai",
+      "model": "gpt-4o-mini",
+      "latencyMs": 4089
+    },
+    {
+      "question": "CVAT lỗi OPA health bundles ngay lúc khởi động thì nên chờ khoảng bao lâu trước khi kiểm tra lại?",
+      "expectedSource": "M12802",
+      "decision": "CLARIFY",
+      "answer": "Sau khi khởi động CVAT, OPA cần thời gian để tải policy bundle từ cvat-server. Có nguồn cho rằng bạn nên chờ khoảng một phút trước khi kiểm tra lại. Một nguồn khác gợi ý là đợi khoảng 45 giây. Thời gian chờ có thể khác nhau phụ thuộc vào tình hình cụ thể.",
+      "sources": [
+        {
+          "id": "M12802",
+          "title": "CVAT · OPA health check lúc khởi động",
+          "topics": [
+            "cvat",
+            "opa",
+            "docker"
+          ],
+          "terms": [
+            "500",
+            "bundle",
+            "health",
+            "migration",
+            "compose",
+            "working"
+          ],
+          "excerpt": "Ngay sau docker compose up -d, OPA chưa lấy được policy bundle từ cvat-server, nên health check báo: 500 ... http://opa:8181/health?bundles. Sau khoảng một phút, CVAT server hoàn tất migration; OPA tải bundle thành công và lần health check tiếp theo báo toàn bộ working.",
+          "answer": "Nếu OPA báo 500 ở /health?bundles ngay sau docker compose up -d, chờ khoảng một phút để CVAT hoàn tất migration rồi kiểm tra lại.",
+          "date": "2026-09-12–14",
+          "authority": "Trao đổi cộng đồng, chưa xác minh vai trò TA",
+          "score": 3
+        },
+        {
+          "id": "M29806",
+          "title": "CVAT · lệnh kiểm tra sức khỏe",
+          "topics": [
+            "cvat",
+            "docker"
+          ],
+          "terms": [
+            "health",
+            "kiem tra",
+            "lenh",
+            "compose",
+            "working"
+          ],
+          "excerpt": "cd ~/Projects/cvat-day2\nsleep 45\ndocker exec -t cvat_server python manage.py health_check",
+          "answer": "Trong môi trường CVAT của bài thực hành, chờ 45 giây rồi chạy: docker exec -t cvat_server python manage.py health_check. Nếu vẫn lỗi, gửi output (che thông tin riêng) cho TA.",
+          "date": "2026-09-12–14",
+          "authority": "Trao đổi cộng đồng, chưa xác minh vai trò TA",
+          "score": 3
+        }
+      ],
+      "mode": "openai",
+      "model": "gpt-4o-mini",
+      "latencyMs": 2834
+    },
+    {
+      "question": "Lệnh kiểm tra health check của cvat_server trong Docker là gì?",
+      "expectedSource": "M29806",
+      "decision": "FOUND",
+      "answer": "Lệnh kiểm tra health check của cvat_server trong Docker là: \ndocker exec -t cvat_server python manage.py health_check",
+      "sources": [
+        {
+          "id": "M29806",
+          "title": "CVAT · lệnh kiểm tra sức khỏe",
+          "topics": [
+            "cvat",
+            "docker"
+          ],
+          "terms": [
+            "health",
+            "kiem tra",
+            "lenh",
+            "compose",
+            "working"
+          ],
+          "excerpt": "cd ~/Projects/cvat-day2\nsleep 45\ndocker exec -t cvat_server python manage.py health_check",
+          "answer": "Trong môi trường CVAT của bài thực hành, chờ 45 giây rồi chạy: docker exec -t cvat_server python manage.py health_check. Nếu vẫn lỗi, gửi output (che thông tin riêng) cho TA.",
+          "date": "2026-09-12–14",
+          "authority": "Trao đổi cộng đồng, chưa xác minh vai trò TA",
+          "score": 4
+        }
+      ],
+      "mode": "openai",
+      "model": "gpt-4o-mini",
+      "latencyMs": 2290
+    },
+    {
+      "question": "Theo hướng dẫn CVAT trong dữ liệu, trước khi chạy health check cần sleep bao nhiêu giây?",
+      "expectedSource": "M29806",
+      "decision": "FOUND",
+      "answer": "Theo hướng dẫn, cần sleep 45 giây trước khi chạy health check.",
+      "sources": [
+        {
+          "id": "M29806",
+          "title": "CVAT · lệnh kiểm tra sức khỏe",
+          "topics": [
+            "cvat",
+            "docker"
+          ],
+          "terms": [
+            "health",
+            "kiem tra",
+            "lenh",
+            "compose",
+            "working"
+          ],
+          "excerpt": "cd ~/Projects/cvat-day2\nsleep 45\ndocker exec -t cvat_server python manage.py health_check",
+          "answer": "Trong môi trường CVAT của bài thực hành, chờ 45 giây rồi chạy: docker exec -t cvat_server python manage.py health_check. Nếu vẫn lỗi, gửi output (che thông tin riêng) cho TA.",
+          "date": "2026-09-12–14",
+          "authority": "Trao đổi cộng đồng, chưa xác minh vai trò TA",
+          "score": 2
+        }
+      ],
+      "mode": "openai",
+      "model": "gpt-4o-mini",
+      "latencyMs": 2465
+    },
+    {
+      "question": "Theo trao đổi setup CVAT trong dữ liệu, tag phiên bản CVAT được nhắc đến là gì?",
+      "expectedSource": "M17439",
+      "decision": "FOUND",
+      "answer": "Tag chuẩn CVAT được nhắc đến là v2.74.1.",
+      "sources": [
+        {
+          "id": "M17439",
+          "title": "CVAT · phiên bản trong bài thực hành",
+          "topics": [
+            "cvat",
+            "opa"
+          ],
+          "terms": [
+            "version",
+            "phien ban",
+            "tag",
+            "image",
+            "cu",
+            "1.12.2",
+            "2.74.1"
+          ],
+          "excerpt": "hình bản của bạn là ver cũ tag chuẩn CVAT v2.74.1 dùng openpolicyagent/opa:1.12.2.",
+          "answer": "Trao đổi trong dữ liệu onboarding nhắc CVAT v2.74.1 và openpolicyagent/opa:1.12.2. Đối chiếu tài liệu bài hiện tại trước khi thay đổi phiên bản.",
+          "date": "2026-09-12–14",
+          "authority": "Trao đổi cộng đồng, chưa xác minh vai trò TA",
+          "score": 3
+        }
+      ],
+      "mode": "openai",
+      "model": "gpt-4o-mini",
+      "latencyMs": 2249
+    },
+    {
+      "question": "Theo trao đổi setup CVAT v2.74.1 trong dữ liệu, image OPA dùng tag nào?",
+      "expectedSource": "M17439",
+      "decision": "FOUND",
+      "answer": "Tag chuẩn cho CVAT v2.74.1 là openpolicyagent/opa:1.12.2.",
+      "sources": [
+        {
+          "id": "M17439",
+          "title": "CVAT · phiên bản trong bài thực hành",
+          "topics": [
+            "cvat",
+            "opa"
+          ],
+          "terms": [
+            "version",
+            "phien ban",
+            "tag",
+            "image",
+            "cu",
+            "1.12.2",
+            "2.74.1"
+          ],
+          "excerpt": "hình bản của bạn là ver cũ tag chuẩn CVAT v2.74.1 dùng openpolicyagent/opa:1.12.2.",
+          "answer": "Trao đổi trong dữ liệu onboarding nhắc CVAT v2.74.1 và openpolicyagent/opa:1.12.2. Đối chiếu tài liệu bài hiện tại trước khi thay đổi phiên bản.",
+          "date": "2026-09-12–14",
+          "authority": "Trao đổi cộng đồng, chưa xác minh vai trò TA",
+          "score": 4
+        }
+      ],
+      "mode": "openai",
+      "model": "gpt-4o-mini",
+      "latencyMs": 1293
+    },
+    {
+      "question": "Phoenix không vào được bằng link trong mail; theo trao đổi trong dữ liệu nên lấy link ở đâu?",
+      "expectedSource": "M28576",
+      "decision": "FOUND",
+      "answer": "Bạn nên vào đúng link trong thông báo, không sử dụng link trong mail.",
+      "sources": [
+        {
+          "id": "M28576",
+          "title": "Phoenix · đường dẫn đăng nhập",
+          "topics": [
+            "phoenix"
+          ],
+          "terms": [
+            "link",
+            "mail",
+            "dang nhap",
+            "truy cap",
+            "vao"
+          ],
+          "excerpt": "vào đúng link trong thông báo nhé không phải link trong mail nha",
+          "answer": "Kiểm tra lại link trong thông báo của chương trình thay vì link trong email. Bộ dữ liệu không giữ đường dẫn đầy đủ; nếu vẫn không vào được, cần TA kiểm tra.",
+          "date": "2026-09-12–14",
+          "authority": "Trao đổi cộng đồng, chưa xác minh vai trò TA",
+          "score": 4
+        }
+      ],
+      "mode": "openai",
+      "model": "gpt-4o-mini",
+      "latencyMs": 1296
+    },
+    {
+      "question": "Phoenix nên mở link trong thông báo hay link trong email theo hướng dẫn trong dữ liệu?",
+      "expectedSource": "M28576",
+      "decision": "FOUND",
+      "answer": "Phoenix nên mở link trong thông báo, không phải link trong email.",
+      "sources": [
+        {
+          "id": "M28576",
+          "title": "Phoenix · đường dẫn đăng nhập",
+          "topics": [
+            "phoenix"
+          ],
+          "terms": [
+            "link",
+            "mail",
+            "dang nhap",
+            "truy cap",
+            "vao"
+          ],
+          "excerpt": "vào đúng link trong thông báo nhé không phải link trong mail nha",
+          "answer": "Kiểm tra lại link trong thông báo của chương trình thay vì link trong email. Bộ dữ liệu không giữ đường dẫn đầy đủ; nếu vẫn không vào được, cần TA kiểm tra.",
+          "date": "2026-09-12–14",
+          "authority": "Trao đổi cộng đồng, chưa xác minh vai trò TA",
+          "score": 3
+        }
+      ],
+      "mode": "openai",
+      "model": "gpt-4o-mini",
+      "latencyMs": 1083
+    }
+  ]
+}

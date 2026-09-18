@@ -1,0 +1,16 @@
+{
+  "created": "2026-09-18T11:59:42.212Z",
+  "totalPlanned": 8,
+  "rows": [
+    {
+      "question": "CVAT OPA báo 500 health bundles ngay sau docker compose up -d. Vì sao?",
+      "expectedSource": "M12802",
+      "decision": "NOT_FOUND",
+      "answer": "Dịch vụ AI chưa trả lời được hoặc nguồn không hợp lệ. Bạn có thể thử lại hoặc chuyển TA.",
+      "sources": [],
+      "mode": "provider-error",
+      "errorCode": "invalid_response",
+      "latencyMs": 107
+    }
+  ]
+}

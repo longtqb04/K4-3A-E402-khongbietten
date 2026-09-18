@@ -1,0 +1,65 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {pathToFileURL} from 'node:url';
+import {Presentation,PresentationFile} from '@oai/artifact-tool';
+const root='D:/Documents/AI20k/Week_1/K4-3A-E402-khongbietten';
+const build=path.join(root,'tmp/slides-build');
+const skill='C:/Users/KN/.codex/plugins/cache/openai-primary-runtime/presentations/26.909.61513/skills/presentations';
+const python='C:/Users/KN/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe';
+const {finalizePresentation,resolvePresentationFont}=await import(pathToFileURL(path.join(skill,'container_tools/artifact_tool_utils.mjs')).href);
+const font=resolvePresentationFont({fontFamily:'Arial',availableFonts:['Arial']});
+const p=Presentation.create({slideSize:{width:1280,height:720}});
+const c={bg:'#111820',white:'#F3F6F7',muted:'#AAB8C5',green:'#66E0B5',amber:'#FFC66D',red:'#FF9389',line:'#354351'};
+function text(s,str,x,y,w,h,size=28,color=c.white,bold=false){const t=s.shapes.add({geometry:'textbox',position:{left:x,top:y,width:w,height:h},fill:'none',line:{fill:'none',width:0}});t.text=str;t.text.style={typeface:font,fontSize:size,bold,color,autoFit:'none'};return t;}
+function page(n,title,source){const s=p.slides.add();s.background.fill=c.bg;text(s,'KUTE / AI THỰC CHIẾN',64,30,750,28,16,c.green,true);text(s,String(n).padStart(2,'0')+' / 06',1110,30,110,28,16,c.muted);if(title)text(s,title,64,89,1150,110,46,c.white,true);text(s,source,64,669,1150,34,14,c.muted);return s;}
+const script=await fs.readFile(path.join(root,'docs/PITCH-6-MINUTES.md'),'utf8');
+function notes(s,n,extra=''){const sections=script.split(/(?=### Slide \d)/);const sec=sections.find(t=>t.startsWith('### Slide '+n));s.speakerNotes.textFrame.setText((sec||'').split('## 3.')[0]+'\n\n'+extra);}
+let s=page(1,'Học viên cần tiếp tục bài lab','Nguồn: k4_messages.csv, M07901; eval/evidence.json. Dữ liệu onboarding 12–14/09/2026.');
+text(s,'“Hi, mình vẫn chưa cài được CVAT.\nCó bạn nào hỗ trợ được\nmình không?”',64,222,755,170,38,c.white,true);
+text(s,'M07901 / Học viên hỏi hỗ trợ cài đặt',64,405,755,35,20,c.muted);
+text(s,'1.092',900,221,300,93,78,c.green,true);
+text(s,'tin nhắn trong bộ dữ liệu',900,321,300,68,25,c.white);
+text(s,'779 tin người gửi\n313 tin bot',900,423,300,95,26,c.muted);
+text(s,'Kute hỗ trợ học viên tìm hướng dẫn có căn cứ\nđể xử lý lỗi cài đặt và tiếp tục thực hành.',64,514,785,83,29,c.green);
+text(s,'Không Biết Tên / K4–3A–E402',64,617,900,30,18,c.muted);notes(s,1);
+s=page(2,'Ba hướng, một lát cắt có thể kiểm chứng','Nguồn: eval/evidence.json; scripts/evidence.js. Đếm tin có từ khóa, các nhóm có thể chồng lắp.');
+const vals=[['Hướng cân nhắc','Tin có từ khóa','Quyết định'],['Hỗ trợ kỹ thuật','21 CVAT / OPA / Docker\n28 Phoenix','CHỌN\nCó hướng dẫn để đối chiếu'],['Điểm danh','49 điểm danh / Zoom','Chưa có dữ liệu\nđiểm danh cá nhân'],['Standup và lập nhóm','58 Standup\n65 team','Cần xác minh quy định\nvà quyền thao tác']];
+const table=s.tables.add({rows:4,columns:3,left:64,top:220,width:1152,height:325,columnWidths:[355,355,442],values:vals});
+table.borders.assign({fill:c.line,width:0.8});
+for(let r=0;r<4;r++){table.rows[r].height=r===0?58:89;for(let j=0;j<3;j++){const cell=table.getCell(r,j);cell.fill=r===1?'#183D35':c.bg;cell.text.style={typeface:font,fontSize:r===0?23:26,color:r===1?c.green:r===0?c.muted:c.white,bold:r===0||r===1};}}
+text(s,'Chọn theo khả năng kiểm chứng và triển khai trong hackathon.',64,573,1140,50,29,c.white,true);
+text(s,'Chưa đo thời gian tiết kiệm hoặc mức giảm tải cho TA.',64,626,1140,30,20,c.muted);notes(s,2);
+s=page(3,'Demo: một ca có nguồn, một ca cần TA','Nguồn: src/knowledge.js; src/assistant.js; src/discord.js. Hai tình huống dùng trong demo trực tiếp.');
+text(s,'4 trích đoạn đối chiếu CSV. Tự động hóa có điều kiện vì hướng dẫn sai có thể làm hỏng môi trường.',64,198,1130,69,26,c.muted);
+text(s,'FOUND',64,313,250,50,34,c.green,true);
+text(s,'OPA báo 500 health bundles sau docker compose up -d',345,303,820,72,29,c.white,true);
+text(s,'Giải thích theo nguồn M12802, mở trích đoạn để kiểm tra.',345,379,820,45,24,c.muted);
+text(s,'NOT_FOUND',64,471,280,50,32,c.amber,true);
+text(s,'“Xin gia hạn bài CVAT health check cho em.”',345,461,820,55,29,c.white,true);
+text(s,'Không tự gia hạn. Người học có thể lưu ticket chuyển TA.',345,527,820,55,24,c.muted);
+text(s,'Web và AI chạy thật. Chưa kiểm chứng guild Discord; ticket demo lưu local.',64,614,1152,40,23,c.amber);notes(s,3,'Chuyển sang web lúc 1:55. Demo thật hai ca. Không khẳng định ticket đã gửi nếu trạng thái còn local.');
+s=page(4,'20/20 đúng nhánh và mã nguồn kỳ vọng','Nguồn: eval/results-live.json (17/09/2026); eval/REPORT.md; spec.md §7. Bộ test tự xây, chưa là holdout độc lập.');
+text(s,'20/20',64,218,615,138,104,c.green,true);
+text(s,'8 FOUND    4 CLARIFY    8 NOT_FOUND',64,382,640,48,25,c.white);
+text(s,'8/8',860,235,335,89,68,c.white,true);
+text(s,'ca cần AI có phản hồi thật',860,341,345,70,25,c.muted);
+text(s,'Bar trong spec: ≥85% đúng nhánh và nguồn.\nĐiều kiện “không bịa khi thiếu nguồn” chưa đủ bằng chứng nghiệm thu.',64,479,1140,106,28,c.white);
+text(s,'Rà nội dung: 19/20 theo trợ lý xây dựng, chưa có người chấm chuyên môn.',64,615,1152,38,23,c.amber);notes(s,4,'Spec còn ghi routing 100%; kết quả đáp ứng cả hai ngưỡng routing nhưng chưa chứng minh điều kiện nội dung.');
+s=page(5,'Một lỗi nội dung vẫn qua kiểm tra mã nguồn','Nguồn: eval/results-live.json, case 6; eval/REPORT.md; docs/SPEC-REVIEW.md.');
+text(s,'CASE 06',64,211,250,40,22,c.amber,true);
+text(s,'Câu hỏi về Docker image tag',64,268,660,58,31,c.white,true);
+text(s,'“CVAT tag image cũ cần đối chiếu\nphiên bản nào?”',64,345,695,110,33,c.muted);
+text(s,'AI diễn đạt thành',829,256,370,48,25,c.muted);
+text(s,'“tag hình ảnh”',829,321,370,122,42,c.red,true);
+text(s,'Phiên bản đúng, nghĩa kỹ thuật lệch.',64,497,1136,49,32,c.white,true);
+text(s,'Kiểm tra ID chưa chứng minh nội dung. Chưa có kết quả chạy lại sau sửa.\nChưa có log validation; slide này phân tích golden set theo guide §5.1.',64,581,1140,74,24,c.muted);notes(s,5);
+s=page(6,'Một tuần để kiểm chứng trước khi mở rộng','Căn cứ ưu tiên: lỗi case 6, kho 4 nguồn và thiếu log validation. eval/REPORT.md; src/knowledge.js.');
+text(s,'01',64,220,95,64,42,c.green,true);text(s,'Kiểm tra nội dung và thuật ngữ',193,219,1000,54,32,c.white,true);text(s,'Sửa lỗi case 6, rồi chạy lại đủ 20 câu.',193,277,1000,47,26,c.muted);
+text(s,'02',64,355,95,64,42,c.green,true);text(s,'Nhờ TA duyệt và bổ sung nguồn',193,354,1000,54,32,c.white,true);text(s,'Mở rộng từ 4 trích đoạn đã đối chiếu.',193,412,1000,47,26,c.muted);
+text(s,'03',64,490,95,64,42,c.green,true);text(s,'Dùng thử với 5 người ngoài nhóm',193,489,1000,54,32,c.white,true);text(s,'Ghi feedback thật và kiểm chứng đường chuyển TA trên Discord.',193,547,1000,47,26,c.muted);
+text(s,'Bài học: mỗi hướng dẫn cần có nguồn thực sự chứng minh.',64,618,1140,41,26,c.green,true);notes(s,6,'Nhóm: Trần Quốc Bảo Long, Ngô Minh Trí, Nguyễn Thanh Dương, Đào Thanh Trường. Kế hoạch tương lai, chưa phải việc đã hoàn tất.');
+const candidatePath=path.join(build,'candidate.pptx');await(await PresentationFile.exportPptx(p)).save(candidatePath);
+await fs.mkdir(path.join(build,'renders'),{recursive:true});
+for(let i=0;i<6;i++){const slide=p.slides.items[i];const blob=await p.export({slide,format:'png',scale:1.5});await fs.writeFile(path.join(build,'renders',`slide-${i+1}.png`),new Uint8Array(await blob.arrayBuffer()));}
+await finalizePresentation({workspaceDir:root,candidatePath,finalPath:path.join(root,'output/kute-pitch-6-slides.pptx'),pythonExecutable:python,integrityValidatorPath:path.join(skill,'container_tools/inspect_presentation_package_integrity.py'),layoutValidatorPath:path.join(skill,'container_tools/inspect_presentation_layout_geometry.py'),layoutArgs:['--expected-slide-size-emu','12192000,6858000','--validate-bullet-geometry','--validate-heading-fit','--require-native-table-slide','2'],explicitTotalSlideCount:6,requiredNativeTableOwnerSlides:[2],fontPolicy:{basis:'design',families:[font]},verifyArtifactToolImport:true,receiptPath:path.join(build,'validation.json')});
+console.log('Created six-slide PowerPoint and previews');

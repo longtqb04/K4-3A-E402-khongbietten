@@ -39,7 +39,7 @@ Loại: [x] Tối ưu tính năng có sẵn  [ ] Tính năng mới
   2. KHÔNG can thiệp/tự chạy lệnh sửa lỗi trực tiếp trên máy học viên.
   3. KHÔNG sử dụng các quy định/câu trả lời từ bot cũ chưa qua kiểm duyệt làm nguồn chuẩn.
 - Mức prototype nhắm tới: [ ] Sketch [ ] Mock [x] Working — phần nào mock, phần nào thật:
-  - **Thật:** OpenAI Responses API (model `gpt-4.1-mini`), 4 trích đoạn nguồn verified, SQLite lưu log & ticket, Discord signature verification, Web simulator, nút chuyển TA.
+  - **Thật:** OpenAI Responses API (model `gpt-4o-mini`), 4 trích đoạn nguồn verified, SQLite lưu log & ticket, Discord signature verification, Web simulator, nút chuyển TA.
   - **Mock:** Chưa kết nối guild Discord thật (mới test qua Web simulator & API endpoint), chưa có dashboard TA riêng.
 - Automation: [ ] augment [x] conditional [ ] automate — lý do theo cost-of-error: Chi phí sai lầm cao (nếu AI bịa hướng dẫn kỹ thuật sai sẽ làm hỏng môi trường máy học viên), do đó dùng `conditional`: AI chỉ trả lời khi nguồn đủ chắc (`FOUND`), hỏi lại khi quá mơ hồ (`CLARIFY`), từ chối & cho chuyển TA khi ngoài phạm vi (`NOT_FOUND`).
 - §4b. Nguyên tắc đã áp dụng (≥4 — HAX/PAIR, xem guide):
